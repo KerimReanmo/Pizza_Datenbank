@@ -10,6 +10,6 @@ WHERE ingis.name = 'Salami' AND dingens.price >= 7.00;
 
 ```
 ```sql
-INSERT INTO `dingens` (`id`, `product_name`, `product_image`, `price`) VALUES
+(`id`, `product_name`, `product_image`, `price`)
 (4, 'Hawaiian', NULL, '11.99'),
 (19, 'Bacon Ranch', NULL, '12.49');
