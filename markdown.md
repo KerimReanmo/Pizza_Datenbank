@@ -9,7 +9,7 @@ JOIN ingredient ingis ON menuings.ingredient_id = ingis.id
 WHERE ingis.name = 'Salami' AND dingens.price >= 7.00;
 
 ```
-```sql
-(`id`, `product_name`, `product_image`, `price`)
-(4, 'Hawaiian', NULL, '11.99'),
-(19, 'Bacon Ranch', NULL, '12.49');
+| id | product_name  | product_image | price  |
+|----|---------------|---------------|--------|
+| 4  | Hawaiian      | NULL          | 11.99  |
+| 19 | Bacon Ranch   | NULL          | 12.49  |
