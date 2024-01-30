@@ -1,3 +1,4 @@
+## Datenbank ER-Modell https://dbdiagram.io/d/65b8b59cac844320ae04b55d
 ## Testdaten Pizzeria
 ### 1. Bestimme alle Pizzen, die Salami als Zutat haben und einen Mindest-Preis von 7.00€haben 
 
