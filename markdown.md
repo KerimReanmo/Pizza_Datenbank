@@ -16,7 +16,7 @@ WHERE ingredis.name = 'Salami' AND d.price >= 7.00;
 
 
 ## Testdaten Pizzeria
-### 1. Bestimme alle Pizzen, die Salami als Zutat haben und einen Mindest-Preis von 7.00€haben 
+### 2. Bestimme alle Bestellungen und deren Produkte für letzten Dezember 
 
 ```sql
 SELECT eo.*, GROUP_CONCAT(d.product_name) AS ordered_products
@@ -30,3 +30,42 @@ GROUP BY eo.id;
 |----|--------------------------|-------------------------|------------------------|----------------------------|------------------------|--------------------------|------------------------|--------------|------------------------|------------------------|---------------------------------------|
 | 1  | John                     | Doe                     | john@example.com       | 123456789                  | 1,2,3                  | 2                        | NULL                   | 29.97        | 123 Main St            | 2023-12-30 20:00:00   | Margherita,Pepperoni,Vegetarian         |
 | 2  | Jane                     | Smith                   | jane@example.com       | 987654321                  | 4,5,6                  | 3                        | NULL                   | 39.97        | 456 Oak St             | 2023-12-18 00:00:00   | Hawaiian,Supreme,BBQ Chicken           |
+
+## Testdaten Pizzeria
+### 3. Bestimme alle Bestellungen, die ein Produkt mit Salami als Zutat beinhalten 
+
+```sql
+SELECT eo.*
+FROM enduser_order eo
+JOIN dishes d ON FIND_IN_SET(d.id, eo.order_products)
+JOIN menu_ingredient mi ON d.id = mi.dishes_id
+JOIN ingredient i ON mi.ingredient_id = i.id
+WHERE i.name = 'Salami';
+```
+| id  | order_customer_firstname | order_customer_lastname | order_customer_email          | order_customer_phonenumber | order_products                                               | order_products_quantity | order_products_images | order_price | order_customer_address | order_created          |
+|-----|--------------------------|-------------------------|-------------------------------|---------------------------|-------------------------------------------------------------|--------------------------|------------------------|--------------|------------------------|------------------------|
+| 2   | Jane                     | Smith                   | jane@example.com              | 987654321                 | 4,5,6                                                         | 3                        | NULL                   | 39.97        | 456 Oak St             | 2023-12-18 00:00:00   |
+| 9   | William                  | Moore                   | william@example.com           | 333444555                 | 4,8,12                                                        | 3                        | NULL                   | 52.45        | 606 Pine St            | 2024-01-31 00:00:00   |
+| 16  | Markus                   | Benzin                  | kundenummereins@example.com   | 53453456                  | 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20             | 1                        | NULL                   | NULL         | 123 All Street         | 2024-02-01 12:00:00   |
+| 16  | Markus                   | Benzin                  | kundenummereins@example.com   | 53453456                  | 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20             | 1                        | NULL                   | NULL         | 123 All Street         | 2024-02-01 12:00:00   |
+
+
+## Testdaten Pizzeria
+### 4. Bestimme alle Bestellungen und deren Produkte mit derselben Adresse 
+
+```sql
+SELECT eo.*, GROUP_CONCAT(d.product_name) AS ordered_products
+FROM enduser_order eo
+JOIN dishes d ON FIND_IN_SET(d.id, eo.order_products)
+WHERE eo.order_customer_address IN (
+    SELECT DISTINCT order_customer_address
+    FROM enduser_order
+    GROUP BY order_customer_address
+    HAVING COUNT(DISTINCT id) > 1
+)
+GROUP BY eo.id;
+
+```
+| eo.order_customer_address |
+|---------------------------|
+| 123 All Street            |
