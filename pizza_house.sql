@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 30. Jan 2024 um 12:34
+-- Erstellungszeit: 01. Feb 2024 um 10:40
 -- Server-Version: 10.4.27-MariaDB
 -- PHP-Version: 8.2.0
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Datenbank: `pizza_app`
+-- Datenbank: `pizza_house`
 --
 
 -- --------------------------------------------------------
@@ -30,35 +30,37 @@ SET time_zone = "+00:00";
 CREATE TABLE `dishes` (
   `id` int(11) NOT NULL,
   `product_name` varchar(255) DEFAULT NULL,
-  `product_image` longblob DEFAULT NULL,
-  `price` decimal(10,2) DEFAULT 0.00
+  `product_image` blob DEFAULT NULL,
+  `price` decimal(10,2) DEFAULT 0.00,
+  `created` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Daten für Tabelle `dishes`
 --
 
-INSERT INTO `dishes` (`id`, `product_name`, `product_image`, `price`) VALUES
-(1, 'Margherita', NULL, '7.00'),
-(2, 'Pepperoni', NULL, '10.99'),
-(3, 'Vegetarian', NULL, '9.99'),
-(4, 'Hawaiian', NULL, '11.99'),
-(5, 'Supreme', NULL, '12.99'),
-(6, 'BBQ Chicken', NULL, '13.99'),
-(7, 'Mushroom Lovers', NULL, '11.49'),
-(8, 'Spinach and Feta', NULL, '10.49'),
-(9, 'Meat Lovers', NULL, '12.99'),
-(10, 'Buffalo Chicken', NULL, '13.49'),
-(11, 'Four Cheese', NULL, '10.99'),
-(12, 'Veggie Delight', NULL, '11.49'),
-(13, 'Margarita', NULL, '9.99'),
-(14, 'Chicken Alfredo', NULL, '12.49'),
-(15, 'Capricciosa', NULL, '7.00'),
-(16, 'Pesto Chicken', NULL, '12.99'),
-(17, 'Garlic Shrimp', NULL, '13.49'),
-(18, 'Taco Pizza', NULL, '11.99'),
-(19, 'Bacon Ranch', NULL, '12.49'),
-(20, 'Greek Pizza', NULL, '10.99');
+INSERT INTO `dishes` (`id`, `product_name`, `product_image`, `price`, `created`) VALUES
+(1, 'Margherita', NULL, '8.99', '2024-02-01 09:38:23'),
+(2, 'Quattro Formaggi', NULL, '10.99', '2024-02-01 09:38:23'),
+(3, 'Prosciutto e Funghi', NULL, '9.99', '2024-02-01 09:38:23'),
+(4, 'Diavola', NULL, '11.99', '2024-02-01 09:38:23'),
+(5, 'Capricciosa', NULL, '10.49', '2024-02-01 09:38:23'),
+(6, 'Frutti di Mare', NULL, '12.99', '2024-02-01 09:38:23'),
+(7, 'Vegetariana', NULL, '9.49', '2024-02-01 09:38:23'),
+(8, 'Tonno e Cipolla', NULL, '11.49', '2024-02-01 09:38:23'),
+(9, 'Quattro Stagioni', NULL, '11.99', '2024-02-01 09:38:23'),
+(10, 'Calzone', NULL, '10.99', '2024-02-01 09:38:23'),
+(11, 'Rucola e Parmigiano', NULL, '12.49', '2024-02-01 09:38:23'),
+(12, 'Caprese', NULL, '8.99', '2024-02-01 09:38:23'),
+(13, 'Gorgonzola e Noci', NULL, '11.49', '2024-02-01 09:38:23'),
+(14, 'Funghi e Salsiccia', NULL, '10.99', '2024-02-01 09:38:23'),
+(15, 'Bianca', NULL, '9.99', '2024-02-01 09:38:23'),
+(16, 'Spinaci e Ricotta', NULL, '10.49', '2024-02-01 09:38:23'),
+(17, 'Pesto e Pollo', NULL, '11.99', '2024-02-01 09:38:23'),
+(18, 'Margherita Extra', NULL, '12.49', '2024-02-01 09:38:23'),
+(19, 'Marinara', NULL, '8.49', '2024-02-01 09:38:23'),
+(20, 'Carbonara', NULL, '11.49', '2024-02-01 09:38:23'),
+(21, 'Salami Deluxe', NULL, '7.50', '2024-02-01 09:40:08');
 
 -- --------------------------------------------------------
 
@@ -68,32 +70,27 @@ INSERT INTO `dishes` (`id`, `product_name`, `product_image`, `price`) VALUES
 
 CREATE TABLE `enduser_basket` (
   `id` int(11) NOT NULL,
-  `basket_products` text DEFAULT NULL,
-  `basket_products_quantity` int(11) DEFAULT 0,
-  `basket_products_images` longblob DEFAULT NULL,
-  `basket_created` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `products` varchar(255) DEFAULT NULL,
+  `products_quantity` int(11) DEFAULT 0,
+  `products_images` blob DEFAULT NULL,
+  `created` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Daten für Tabelle `enduser_basket`
 --
 
-INSERT INTO `enduser_basket` (`id`, `basket_products`, `basket_products_quantity`, `basket_products_images`, `basket_created`) VALUES
-(1, '1,2,3', 2, NULL, '2024-01-30 11:00:00'),
-(2, '4,5,6', 3, NULL, '2024-01-30 11:30:00'),
-(3, '7,8,9', 1, NULL, '2024-01-30 12:00:00'),
-(4, '10,11,12', 2, NULL, '2024-01-30 12:30:00'),
-(5, '13,14,15', 1, NULL, '2024-01-30 13:00:00'),
-(6, '1,5,9', 3, NULL, '2024-01-30 13:30:00'),
-(7, '2,6,10', 2, NULL, '2024-01-30 14:00:00'),
-(8, '3,7,11', 1, NULL, '2024-01-30 14:30:00'),
-(9, '4,8,12', 3, NULL, '2024-01-30 15:00:00'),
-(10, '13,14,15', 2, NULL, '2024-01-30 15:30:00'),
-(11, '1,2,3', 1, NULL, '2024-01-30 16:00:00'),
-(12, '4,5,6', 2, NULL, '2024-01-30 16:30:00'),
-(13, '7,8,9', 3, NULL, '2024-01-30 17:00:00'),
-(14, '10,11,12', 1, NULL, '2024-01-30 17:30:00'),
-(15, '13,14,15', 2, NULL, '2024-01-30 18:00:00');
+INSERT INTO `enduser_basket` (`id`, `products`, `products_quantity`, `products_images`, `created`) VALUES
+(1, 'Margherita, Quattro Formaggi', 2, NULL, '2024-02-01 09:38:23'),
+(2, 'Prosciutto e Funghi, Capricciosa', 2, NULL, '2024-02-01 09:38:23'),
+(3, 'Diavola, Frutti di Mare', 2, NULL, '2024-02-01 09:38:23'),
+(4, 'Vegetariana, Tonno e Cipolla', 2, NULL, '2024-02-01 09:38:23'),
+(5, 'Quattro Stagioni, Calzone', 2, NULL, '2024-02-01 09:38:23'),
+(6, 'Rucola e Parmigiano, Caprese', 2, NULL, '2024-02-01 09:38:23'),
+(7, 'Gorgonzola e Noci, Funghi e Salsiccia', 2, NULL, '2024-02-01 09:38:23'),
+(8, 'Bianca, Spinaci e Ricotta', 2, NULL, '2024-02-01 09:38:23'),
+(9, 'Pesto e Pollo, Margherita Extra', 2, NULL, '2024-02-01 09:38:23'),
+(10, 'Marinara, Carbonara', 2, NULL, '2024-02-01 09:38:23');
 
 -- --------------------------------------------------------
 
@@ -103,33 +100,28 @@ INSERT INTO `enduser_basket` (`id`, `basket_products`, `basket_products_quantity
 
 CREATE TABLE `enduser_order` (
   `id` int(11) NOT NULL,
-  `order_customer_firstname` varchar(255) DEFAULT NULL,
-  `order_customer_lastname` varchar(255) DEFAULT NULL,
-  `order_customer_email` varchar(255) DEFAULT NULL,
-  `order_customer_phonenumber` varchar(255) DEFAULT NULL,
-  `order_products` text DEFAULT NULL,
-  `order_products_quantity` int(11) DEFAULT 0,
-  `order_products_images` longblob DEFAULT NULL,
-  `order_price` decimal(10,2) DEFAULT NULL,
-  `order_customer_address` varchar(255) DEFAULT NULL,
-  `order_created` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `user_id` int(11) DEFAULT NULL,
+  `products` varchar(255) DEFAULT NULL,
+  `quantity` int(11) DEFAULT 0,
+  `dishes_id` int(11) DEFAULT NULL,
+  `created` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Daten für Tabelle `enduser_order`
 --
 
-INSERT INTO `enduser_order` (`id`, `order_customer_firstname`, `order_customer_lastname`, `order_customer_email`, `order_customer_phonenumber`, `order_products`, `order_products_quantity`, `order_products_images`, `order_price`, `order_customer_address`, `order_created`) VALUES
-(1, 'John', 'Doe', 'john@example.com', '123456789', '1,2,3', 2, NULL, '29.97', '123 Main St', '2024-01-30 19:00:00'),
-(2, 'Jane', 'Smith', 'jane@example.com', '987654321', '4,5,6', 3, NULL, '39.97', '456 Oak St', '2024-01-30 19:30:00'),
-(3, 'Michael', 'Johnson', 'michael@example.com', '555123456', '7,8,9', 1, NULL, '21.97', '789 Pine St', '2024-01-30 20:00:00'),
-(4, 'Emily', 'Williams', 'emily@example.com', '789654123', '10,11,12', 2, NULL, '45.96', '101 Elm St', '2024-01-30 20:30:00'),
-(5, 'Robert', 'Brown', 'robert@example.com', '456789321', '13,14,15', 1, NULL, '33.98', '202 Maple St', '2024-01-30 21:00:00'),
-(6, 'Emma', 'Davis', 'emma@example.com', '321987654', '1,5,9', 3, NULL, '51.96', '303 Birch St', '2024-01-30 21:30:00'),
-(7, 'Daniel', 'Miller', 'daniel@example.com', '111222333', '2,6,10', 2, NULL, '44.96', '404 Cedar St', '2024-01-30 22:00:00'),
-(8, 'Olivia', 'Wilson', 'olivia@example.com', '222333444', '3,7,11', 1, NULL, '33.97', '505 Oak St', '2024-01-30 22:30:00'),
-(9, 'William', 'Moore', 'william@example.com', '333444555', '4,8,12', 3, NULL, '52.45', '606 Pine St', '2024-01-30 23:00:00'),
-(16, 'Markus', 'Benzin', 'kundenummereins@example.com', '53453456', '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20', 1, NULL, NULL, '123 All Street', '2024-02-01 11:00:00');
+INSERT INTO `enduser_order` (`id`, `user_id`, `products`, `quantity`, `dishes_id`, `created`) VALUES
+(11, 1, 'Salami Deluxe', 1, 21, '2023-12-15 11:30:00'),
+(12, 2, 'Quattro Formaggi, Funghi e Salsiccia', 2, 2, '2023-02-05 17:45:00'),
+(13, 3, 'Margherita, Prosciutto e Funghi, Capricciosa', 2, 1, '2023-07-20 18:15:00'),
+(14, 4, 'Vegetariana', 1, 7, '2023-09-10 12:00:00'),
+(15, 4, 'Diavola', 1, 4, '2023-09-12 14:30:00'),
+(16, 4, 'Frutti di Mare', 1, 6, '2023-10-05 17:45:00'),
+(17, 4, 'Tonno e Cipolla', 1, 8, '2023-11-08 20:00:00'),
+(18, 4, 'Quattro Stagioni', 1, 9, '2023-12-01 21:30:00'),
+(19, 4, 'Calzone', 1, 10, '2023-12-18 17:00:00'),
+(20, 4, 'Rucola e Parmigiano', 1, 11, '2024-01-05 11:15:00');
 
 -- --------------------------------------------------------
 
@@ -147,26 +139,26 @@ CREATE TABLE `ingredient` (
 --
 
 INSERT INTO `ingredient` (`id`, `name`) VALUES
-(1, 'Tomato Sauce'),
-(2, 'Mozzarella Cheese'),
-(3, 'Pepperoni'),
-(4, 'Pineapple'),
+(1, 'Tomatensoße'),
+(2, 'Mozzarella'),
+(3, 'Champignons'),
+(4, 'Schinken'),
 (5, 'Salami'),
-(6, 'Bell Peppers'),
-(7, 'Onions'),
-(8, 'BBQ Sauce'),
-(9, 'Chicken'),
-(10, 'Mushrooms'),
-(11, 'Spinach'),
-(12, 'Feta Cheese'),
-(13, 'Ground Beef'),
-(14, 'Buffalo Sauce'),
-(15, 'Blue Cheese'),
-(16, 'Cheddar Cheese'),
-(17, 'Parmesan Cheese'),
-(18, 'Alfredo Sauce'),
-(19, 'Shrimp'),
-(20, 'Taco Seasoning');
+(6, 'Paprika'),
+(7, 'Zwiebeln'),
+(8, 'Oliven'),
+(9, 'Thunfisch'),
+(10, 'Artischocken'),
+(11, 'Peperoni'),
+(12, 'Spinat'),
+(13, 'Rucola'),
+(14, 'Parmesan'),
+(15, 'Gorgonzola'),
+(16, 'Frischkäse'),
+(17, 'Tomaten'),
+(18, 'Knoblauch'),
+(19, 'Basilikum'),
+(20, 'Oregano');
 
 -- --------------------------------------------------------
 
@@ -175,8 +167,8 @@ INSERT INTO `ingredient` (`id`, `name`) VALUES
 --
 
 CREATE TABLE `menu_ingredient` (
-  `dishes_id` int(11) DEFAULT NULL,
-  `ingredient_id` int(11) DEFAULT NULL
+  `dishes_id` int(11) NOT NULL,
+  `ingredient_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -186,61 +178,93 @@ CREATE TABLE `menu_ingredient` (
 INSERT INTO `menu_ingredient` (`dishes_id`, `ingredient_id`) VALUES
 (1, 1),
 (1, 2),
-(2, 1),
 (2, 2),
-(2, 3),
+(2, 14),
+(2, 16),
 (3, 1),
-(3, 2),
-(3, 10),
+(3, 4),
+(3, 11),
 (4, 1),
-(4, 2),
-(4, 4),
 (4, 5),
+(4, 11),
 (5, 1),
-(5, 2),
-(5, 3),
-(5, 6),
+(5, 4),
 (5, 7),
-(6, 8),
+(5, 17),
+(6, 1),
 (6, 9),
+(6, 18),
 (7, 1),
-(7, 2),
-(7, 10),
-(8, 1),
-(8, 2),
-(8, 11),
-(9, 1),
+(7, 3),
+(7, 6),
+(7, 7),
+(7, 17),
+(8, 7),
+(8, 9),
+(8, 17),
 (9, 2),
-(9, 13),
-(10, 9),
-(10, 14),
-(11, 2),
-(11, 16),
-(11, 17),
-(11, 18),
+(9, 4),
+(9, 7),
+(9, 17),
+(10, 1),
+(10, 2),
+(10, 4),
+(10, 7),
+(10, 17),
+(11, 13),
+(11, 14),
 (12, 1),
-(12, 2),
-(12, 11),
-(12, 16),
-(13, 1),
-(13, 2),
-(14, 8),
-(14, 18),
-(15, 1),
-(15, 2),
-(15, 10),
-(16, 8),
-(16, 9),
+(12, 17),
+(13, 14),
+(13, 15),
+(13, 16),
+(14, 3),
+(14, 4),
+(14, 11),
+(14, 16),
+(15, 16),
+(16, 12),
 (16, 16),
-(17, 1),
-(17, 19),
-(18, 13),
-(18, 20),
-(19, 5),
-(19, 8),
+(17, 13),
+(17, 16),
+(17, 18),
+(18, 1),
+(18, 2),
+(18, 17),
+(19, 1),
+(19, 6),
+(19, 16),
 (20, 2),
-(20, 12),
-(20, 17);
+(20, 16),
+(20, 18),
+(21, 1),
+(21, 5);
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `user`
+--
+
+CREATE TABLE `user` (
+  `id` int(11) NOT NULL,
+  `firstname` varchar(255) DEFAULT NULL,
+  `lastname` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `phonenumber` varchar(20) DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `created` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Daten für Tabelle `user`
+--
+
+INSERT INTO `user` (`id`, `firstname`, `lastname`, `email`, `phonenumber`, `address`, `created`) VALUES
+(1, 'Max', 'Mustermann', 'max.mustermann@example.com', '1234567890', 'Musterstraße 123, Musterstadt', '2024-02-01 09:39:05'),
+(2, 'Maria', 'Musterfrau', 'maria.musterfrau@example.com', '0987654321', 'Beispielweg 456, Beispielstadt', '2024-02-01 09:39:05'),
+(3, 'Hans', 'Beispiel', 'hans.beispiel@example.com', '1122334455', 'Musterplatz 789, Musterstadt', '2024-02-01 09:39:05'),
+(4, 'Klaus', 'Kunde', 'klaus.kunde@example.com', '5555555555', 'Musterstraße 123, Musterstadt', '2024-02-01 09:40:08');
 
 --
 -- Indizes der exportierten Tabellen
@@ -262,7 +286,9 @@ ALTER TABLE `enduser_basket`
 -- Indizes für die Tabelle `enduser_order`
 --
 ALTER TABLE `enduser_order`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `dishes_id` (`dishes_id`);
 
 --
 -- Indizes für die Tabelle `ingredient`
@@ -274,12 +300,25 @@ ALTER TABLE `ingredient`
 -- Indizes für die Tabelle `menu_ingredient`
 --
 ALTER TABLE `menu_ingredient`
-  ADD UNIQUE KEY `dishes_id` (`dishes_id`,`ingredient_id`),
+  ADD PRIMARY KEY (`dishes_id`,`ingredient_id`),
   ADD KEY `ingredient_id` (`ingredient_id`);
+
+--
+-- Indizes für die Tabelle `user`
+--
+ALTER TABLE `user`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Constraints der exportierten Tabellen
 --
+
+--
+-- Constraints der Tabelle `enduser_order`
+--
+ALTER TABLE `enduser_order`
+  ADD CONSTRAINT `enduser_order_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+  ADD CONSTRAINT `enduser_order_ibfk_2` FOREIGN KEY (`dishes_id`) REFERENCES `dishes` (`id`);
 
 --
 -- Constraints der Tabelle `menu_ingredient`

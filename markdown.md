@@ -3,34 +3,32 @@
 ### 1. Bestimme alle Pizzen, die Salami als Zutat haben und einen Mindest-Preis von 7.00€haben 
 
 ```sql
-SELECT d.*
-FROM dishes d 
-JOIN menu_ingredient menui ON d.id = menui.dishes_id
-JOIN ingredient ingredis ON menui.ingredient_id = ingredis.id
-WHERE ingredis.name = 'Salami' AND d.price >= 7.00;
+SELECT * FROM dishes 
+WHERE id IN (SELECT dishes_id FROM menu_ingredient WHERE ingredient_id = (SELECT id FROM ingredient WHERE name = 'Salami'))
+AND price >= 7.00;
 
 ```
-| id | product_name  | product_image | price  |
-|----|---------------|---------------|--------|
-| 4  | Hawaiian      | NULL          | 11.99  |
-| 19 | Bacon Ranch   | NULL          | 12.49  |
+| id | product_name   | product_image | price |         created         |
+|----|----------------|---------------|-------|-------------------------|
+| 4  | Diavola        | NULL          | 11.99 | 2024-02-01 10:38:23    |
+| 21 | Salami Deluxe  | NULL          | 7.50  | 2024-02-01 10:40:08    |
+
 
 
 ## Testdaten Pizzeria
 ### 2. Bestimme alle Bestellungen und deren Produkte für letzten Dezember 
 
 ```sql
-SELECT eo.*, GROUP_CONCAT(d.product_name) AS ordered_products
-FROM enduser_order eo
-JOIN dishes d ON FIND_IN_SET(d.id, eo.order_products)
-WHERE MONTH(eo.order_created) = 12 AND YEAR(eo.order_created) = YEAR(CURDATE()) - 1
-GROUP BY eo.id;
+SELECT * FROM enduser_order 
+WHERE created >= '2023-12-01' AND created < '2024-01-01';
 
 ```
-| id | order_customer_firstname | order_customer_lastname | order_customer_email   | order_customer_phonenumber | order_products         | order_products_quantity | order_products_images | order_price | order_customer_address | order_created          | ordered_products                       |
-|----|--------------------------|-------------------------|------------------------|----------------------------|------------------------|--------------------------|------------------------|--------------|------------------------|------------------------|---------------------------------------|
-| 1  | John                     | Doe                     | john@example.com       | 123456789                  | 1,2,3                  | 2                        | NULL                   | 29.97        | 123 Main St            | 2023-12-30 20:00:00   | Margherita,Pepperoni,Vegetarian         |
-| 2  | Jane                     | Smith                   | jane@example.com       | 987654321                  | 4,5,6                  | 3                        | NULL                   | 39.97        | 456 Oak St             | 2023-12-18 00:00:00   | Hawaiian,Supreme,BBQ Chicken           |
+| id  | user_id | products          | quantity | dishes_id |         created         |
+|-----|---------|-------------------|----------|-----------|-------------------------|
+| 11  | 1       | Salami Deluxe     | 1        | 21        | 2023-12-15 12:30:00    |
+| 18  | 4       | Quattro Stagioni  | 1        | 9         | 2023-12-01 22:30:00    |
+| 19  | 4       | Calzone           | 1        | 10        | 2023-12-18 18:00:00   |
+
 
 ## Testdaten Pizzeria
 ### 3. Bestimme alle Bestellungen, die ein Produkt mit Salami als Zutat beinhalten 
@@ -56,62 +54,68 @@ WHERE i.name = 'Salami';
 ### 4. Bestimme alle Bestellungen und deren Produkte mit derselben Adresse
 
 ```sql
-SELECT eo.*, GROUP_CONCAT(d.product_name) AS ordered_products
+SELECT eo.id AS order_id, eo.products, eo.quantity, eo.created AS order_date, u.address
 FROM enduser_order eo
-JOIN dishes d ON FIND_IN_SET(d.id, eo.order_products)
-WHERE eo.order_customer_address IN (
-    SELECT DISTINCT order_customer_address
-    FROM enduser_order
-    GROUP BY order_customer_address
-    HAVING COUNT(DISTINCT id) > 1
-)
-GROUP BY eo.id;
+JOIN user u ON eo.user_id = u.id
+WHERE eo.user_id IN (SELECT u1.id
+FROM user u1
+JOIN user u2 ON u1.address = u2.address
+WHERE u1.id <> u2.id);
 
 ```
-| id  | order_customer_firstname | order_customer_lastname  | order_customer_email       | order_customer_phonenumber | order_products          | order_products_quantity | order_products_images | order_price | order_customer_address | order_created          | ordered_products     |
-|-----|--------------------------|--------------------------|----------------------------|----------------------------|-------------------------|--------------------------|------------------------|--------------|------------------------|------------------------|----------------------|
+| order_id | products                                        | quantity | order_date            | address                              |
+|----------|-------------------------------------------------|----------|-----------------------|--------------------------------------|
+| 11       | Salami Deluxe                                   | 3        | 2024-02-01 10:47:30  | Musterstraße 123, Musterstadt         |
+| 21       | Margherita, Prosciutto e Funghi, Capricciosa     | 2        | 2023-08-01 12:30:00  | Musterstraße 123, Musterstadt         |
+| 24       | Vegetariana, Tonno e Cipolla, Gorgonzola e Noci | 2        | 2023-08-15 21:30:00  | Musterstraße 123, Musterstadt         |
+| 14       | Vegetariana                                    | 1        | 2023-09-10 14:00:00  | Musterstraße 123, Musterstadt         |
+| 15       | Diavola                                         | 152      | 2024-02-01 10:48:17  | Musterstraße 123, Musterstadt         |
+| 16       | Frutti di Mare                                  | 2        | 2024-02-01 10:47:37  | Musterstraße 123, Musterstadt         |
+| 17       | Tonno e Cipolla                                 | 6        | 2024-02-01 10:47:35  | Musterstraße 123, Musterstadt         |
+| 18       | Quattro Stagioni                                | 2        | 2024-02-01 10:48:14  | Musterstraße 123, Musterstadt         |
+| 19       | Calzone                                         | 2        | 2024-02-01 10:48:16  | Musterstraße 123, Musterstadt         |
+| 20       | Rucola e Parmigiano                             | 2        | 2024-02-01 10:47:40  | Musterstraße 123, Musterstadt         |
 
 
 
 ## Testdaten Pizzeria
-### 5. Bestimme alle Bestellungen und deren Produkte, die für alle Produkte eine Mindestmenge von 2 haben und dabei mindestens 3 Produkte insgesamt
+### 5. Bestimme alle Bestellungen und deren Produkte, die für alle Produkte eine Mindestmenge von 2 haben und dabei mindestens 3 Produkte insgesamt:
 
 ```sql
-SELECT eo.*, GROUP_CONCAT(d.product_name) AS ordered_products
+SELECT eo.id AS order_id, eo.products, eo.quantity, eo.created AS order_date, u.address
 FROM enduser_order eo
-JOIN dishes d ON FIND_IN_SET(d.id, eo.order_products)
-WHERE eo.order_products_quantity >= 2
-GROUP BY eo.id
-HAVING COUNT(DISTINCT d.id) >= 3;
+JOIN user u ON eo.user_id = u.id
+WHERE eo.id IN (SELECT eo1.id
+FROM enduser_order eo1
+JOIN enduser_order eo2 ON eo1.id = eo2.id
+WHERE eo1.quantity >= 2 AND eo2.quantity >= 2
+HAVING COUNT(DISTINCT eo1.dishes_id) >= 3);
 
 ```
-| id  | order_customer_firstname | order_customer_lastname | order_customer_email      | order_customer_phonenumber | order_products             | order_products_quantity | order_products_images | order_price | order_customer_address | order_created          | ordered_products                                |
-|-----|--------------------------|-------------------------|---------------------------|----------------------------|----------------------------|--------------------------|------------------------|--------------|------------------------|------------------------|--------------------------------------------------|
-| 1   | John                     | Doe                     | john@example.com          | 123456789                  | 1,2,3                      | 2                        | NULL                   | 29.97        | 123 Main St            | 2023-12-30 20:00:00   | Margherita,Pepperoni,Vegetarian                  |
-| 2   | Jane                     | Smith                   | jane@example.com          | 987654321                  | 4,5,6                      | 3                        | NULL                   | 39.97        | 456 Oak St             | 2023-12-18 00:00:00   | Hawaiian,Supreme,BBQ Chicken                    |
-| 4   | Emily                    | Williams                | emily@example.com         | 789654123                  | 10,11,12                   | 2                        | NULL                   | 45.96        | 101 Elm St             | 2024-01-30 21:30:00   | Buffalo Chicken,Four Cheese,Veggie Delight      |
-| 6   | Emma                     | Davis                   | emma@example.com          | 321987654                  | 1,5,9                      | 3                        | NULL                   | 51.96        | 303 Birch St           | 2024-01-30 22:30:00   | Margherita,Supreme,Meat Lovers                  |
-| 7   | Daniel                   | Miller                  | daniel@example.com        | 111222333                  | 2,6,10                     | 2                        | NULL                   | 44.96        | 404 Cedar St           | 2024-01-30 23:00:00   | Pepperoni,BBQ Chicken,Buffalo Chicken           |
-| 9   | William                  | Moore                   | william@example.com       | 333444555                  | 4,8,12                     | 3                        | NULL                   | 52.45        | 606 Pine St            | 2024-01-31 00:00:00   | Hawaiian,Spinach and Feta,Veggie Delight        |
-
+| order_id | products       | quantity | order_date            | address                           |
+|----------|-----------------|----------|-----------------------|-----------------------------------|
+| 11       | Salami Deluxe   | 3        | 2024-02-01 10:47:30   | Musterstraße 123, Musterstadt     |
 
 
 ## Testdaten Pizzeria
 ### 6. Bestimme alle Kunden (Adressen), die schon jedes Produkt mindestens einmal bestellt haben
 
 ```sql
-SELECT eo.*, GROUP_CONCAT(d.product_name) AS ordered_products
-FROM enduser_order eo
-JOIN dishes d ON FIND_IN_SET(d.id, eo.order_products)
-WHERE eo.order_customer_address IN (
-    SELECT DISTINCT order_customer_address
-    FROM enduser_order
-    GROUP BY order_customer_address
-    HAVING COUNT(DISTINCT id) > 1
-)
-GROUP BY eo.id;
+SELECT DISTINCT u.address FROM user u
+WHERE NOT EXISTS (
+  SELECT i.id FROM ingredient i
+  WHERE NOT EXISTS (
+    SELECT d.id FROM dishes d
+    WHERE NOT EXISTS (
+      SELECT eo.id FROM enduser_order eo
+      WHERE eo.user_id = u.id AND eo.dishes_id = d.id
+    )
+  )
+);
 
 ```
-| eo.order_customer_address |
-|---------------------------|
-| 123 All Street            |
+| address                              |
+|--------------------------------------|
+| Musterstraße 123, Musterstadt         |
+| Beispielweg 456, Beispielstadt        |
+| Musterplatz 789, Musterstadt          |
